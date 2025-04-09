@@ -1,0 +1,43 @@
+# Load necessary libraries
+library(readr)     # for reading/writing CSVs
+library(readxl)    # for reading Excel files
+library(writexl)   # for writing Excel files
+library(dplyr)     # for data manipulation
+library(tools)     # for file extension detection
+
+# ---- CONFIGURATION ----
+input_file <- "your_file.csv"   # Replace with your actual file path
+group_column <- "school"        # Column to split by
+output_format <- "csv"          # Options: "csv" or "xlsx"
+output_dir <- "output_files"    # Directory to save the output files
+
+# ---- SETUP ----
+# Create output directory if it doesn't exist
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir)
+}
+
+# ---- READ FILE ----
+file_ext <- tolower(file_ext(input_file))
+
+if (file_ext == "csv") {
+  df <- read_csv(input_file, show_col_types = FALSE)
+} else if (file_ext %in% c("xls", "xlsx")) {
+  df <- read_excel(input_file)
+} else {
+  stop("Unsupported file type. Use CSV or Excel.")
+}
+
+# ---- SPLIT AND SAVE ----
+split_data <- split(df, df[[group_column]])
+
+for (name in names(split_data)) {
+  subset_df <- split_data[[name]]
+  safe_name <- gsub("[^A-Za-z0-9_]", "_", name)  # sanitize filename
+  
+  if (output_format == "csv") {
+    write_csv(subset_df, file.path(output_dir, paste0(safe_name, ".csv")))
+  } else if (output_format == "xlsx") {
+    write_xlsx(subset_df, path = file.path(output_dir, paste0(safe_name, ".xlsx")))
+  }
+}
