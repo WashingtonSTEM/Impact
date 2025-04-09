@@ -7,7 +7,7 @@ library(tools)     # for file extension detection
 
 # ---- CONFIGURATION ----
 input_file <- "your_file.csv"   # Replace with your actual file path
-group_column <- "school"        # Column to split by
+group_column <- "column_name"        # Column to split by
 output_format <- "csv"          # Options: "csv" or "xlsx"
 output_dir <- "output_files"    # Directory to save the output files
 
